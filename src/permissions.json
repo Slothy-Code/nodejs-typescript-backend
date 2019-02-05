@@ -1,0 +1,33 @@
+[
+  {
+    "name": "ROLE_USER",
+    "extends": [],
+    "permissions": [
+      "user.login",
+      "chat.*"
+    ]
+  },
+  {
+    "name": "ROLE_PREMIUM",
+    "extends": [
+      "ROLE_USER"
+    ],
+    "permissions": [
+      "test.permission"
+    ]
+  },
+  {
+    "name": "ROLE_ADMIN",
+    "extends": [],
+    "permissions": [
+      "users.*"
+    ]
+  },
+  {
+    "name": "ROLE_SUPER_ADMIN",
+    "extends": [],
+    "permissions": [
+      "*"
+    ]
+  }
+]

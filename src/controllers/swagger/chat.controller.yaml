@@ -1,0 +1,21 @@
+#  Tags
+tags:
+  name: Chat
+  description: Chat managment
+
+#  Routes
+/chat/send:
+  post:
+    tags:
+      - Chat
+    summary: Login to the application
+    requestBody:
+      description: User that you want to login
+      required: true
+      content:
+        application/json:
+          schema:
+           $ref: '#/definitions/UserSchema'
+    responses:
+      '200':
+        description: Successful login adn return token

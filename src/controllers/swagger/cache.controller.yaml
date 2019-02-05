@@ -1,0 +1,14 @@
+#  Tags
+tags:
+  name: Cache
+  description: Cache managment
+
+#  Routes
+/cache/export:
+  get:
+    tags:
+      - Cache
+    summary: Get all caches
+    responses:
+      '200':
+        description: Successful return all cache

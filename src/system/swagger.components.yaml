@@ -1,0 +1,13 @@
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+    NoPermissionError:
+      description: No permission to access this endpoint
+    Successful:
+      description: Successful request

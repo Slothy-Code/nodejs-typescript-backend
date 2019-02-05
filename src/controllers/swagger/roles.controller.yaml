@@ -1,0 +1,29 @@
+#  Tags
+tags:
+  name: Roles
+  description: Roles managment
+
+#  Routes
+/roles:
+  get:
+    tags:
+      - Roles
+    summary: Get all roles
+    responses:
+      '200':
+        description: Successful return all roles
+/roles/permissions/{roleName}:
+  get:
+    tags:
+      - Roles
+    summary: Get permissions by role name
+    parameters:
+      - in: path
+        name: roleName
+        schema:
+          type: string
+        required: true
+        description: Name of role
+    responses:
+      '200':
+        description: Successful return all permissions by role name

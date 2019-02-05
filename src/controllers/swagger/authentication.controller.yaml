@@ -1,0 +1,56 @@
+#  Tags
+tags:
+  name: Authentication
+  description: User management and login
+
+#  Routes
+/user/login:
+  post:
+    tags:
+      - Authentication
+    summary: Login to the application
+    requestBody:
+      description: User that you want to login
+      required: true
+      content:
+        application/json:
+          schema:
+           $ref: '#/definitions/UserSchema'
+    responses:
+      '200':
+        description: Successful login adn return token
+
+/user/register:
+  post:
+    tags:
+      - Authentication
+    summary: Register to the application
+    requestBody:
+      description: User that you want to register
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/definitions/UserSchema'
+    responses:
+      '200':
+        description: Successful register
+
+
+/user/test:
+  get:
+    tags:
+      - Authentication
+    summary: Get test to the application
+    security:
+      - bearerAuth: []
+    produces:
+      - application/json
+    responses:
+      '200':
+        $ref: '#/components/responses/Successful'
+      '402':
+        $ref: '#/components/responses/NoPermissionError'
+      '403':
+        $ref: '#/components/responses/UnauthorizedError'
+
