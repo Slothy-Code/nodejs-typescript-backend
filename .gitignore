@@ -5,3 +5,4 @@ certificates/
 yarn.lock
 coverage/
 .nyc_output/
+.idea
