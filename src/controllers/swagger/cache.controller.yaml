@@ -8,7 +8,30 @@ tags:
   get:
     tags:
       - Cache
+    security:
+      - bearerAuth: []
     summary: Get all caches
+    responses:
+      '200':
+        description: Successful return all cache
+
+/cache/import:
+  post:
+    tags:
+      - Cache
+    security:
+      - bearerAuth: []
+    summary: Import all caches
+    requestBody:
+      description: Data that you want to import
+      required: true
+      content:
+        application/json:
+          schema:
+            properties:
+               importedData:
+                 type: string
+                 example: {}
     responses:
       '200':
         description: Successful return all cache

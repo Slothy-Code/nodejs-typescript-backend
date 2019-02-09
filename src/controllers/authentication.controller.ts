@@ -8,17 +8,8 @@ import * as jwt from 'jwt-simple';
 @Controller('/user')
 export class AuthenticationController {
 
-    @Route({route: '/test', cached: true, permission: 'chat.join'})
-    public async test(req: Request, res: Response) {
-        setTimeout(() => {
-            res.status(200).json({data: {  test: 'testa' }})
-        }, 1000);
-    }
-
-
     @Route({route: '/login', type: 'post'})
     public async login(req: Request, res: Response) {
-        console.log(Number(process.env.CACHE_DURATION));
         try {
             const name = req.body.name;
             const password = req.body.password;
@@ -37,20 +28,6 @@ export class AuthenticationController {
             return res.status(200).json(user.token);
         } catch (error) {
             res.status(401).json({'message': 'Invalid credentials', 'errors': error})
-        }
-    }
-
-    // not-tested
-    @Route({route: '/refresh-token', type: 'get'})
-    public async refreshToken(req: Request, res: Response) {
-        try {
-            let token = req.header['Authorization'];
-            let user = await User.findOne({token: token});
-            user.token = this.generateToken(user);
-            user.save();
-            return res.status(200).json(user.token);
-        } catch (error) {
-            res.status(500).json({'message': error})
         }
     }
 
@@ -74,6 +51,24 @@ export class AuthenticationController {
             res.status(200).json(newUser);
         } catch (err) {
             res.status(400).json(err)
+        }
+    }
+
+    @Route({route: '/refresh-token', type: 'get'})
+    public async refreshToken(req: Request, res: Response) {
+        try {
+            if (!req.headers.authorization) throw 'Not logged!';
+            let token = req.headers.authorization.substring(7);
+
+            let user = await User.findOne({token: token});
+
+            if (user === null) throw 'Invalid token';
+
+            user.token = this.generateToken(user);
+            user.save();
+            return res.status(200).json(user.token);
+        } catch (error) {
+            res.status(500).json({'message': error})
         }
     }
 

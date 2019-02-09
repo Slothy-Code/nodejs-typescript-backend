@@ -9,6 +9,8 @@ tags:
     tags:
       - Chat
     summary: Login to the application
+    security:
+      - bearerAuth: []
     requestBody:
       description: User that you want to login
       required: true
