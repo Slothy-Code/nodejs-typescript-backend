@@ -8,7 +8,9 @@ tags:
   get:
     tags:
       - Roles
-    summary: Get all roles
+    summary: +roles.getAll+ Get all roles
+    security:
+      - bearerAuth: []
     responses:
       '200':
         description: Successful return all roles
@@ -16,7 +18,9 @@ tags:
   get:
     tags:
       - Roles
-    summary: Get permissions by role name
+    summary: +roles.getByName+ Get permissions by role name
+    security:
+      - bearerAuth: []
     parameters:
       - in: path
         name: roleName

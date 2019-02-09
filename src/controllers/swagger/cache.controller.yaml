@@ -10,7 +10,7 @@ tags:
       - Cache
     security:
       - bearerAuth: []
-    summary: Get all caches
+    summary: +cache.export+ Get all caches
     responses:
       '200':
         description: Successful return all cache
@@ -21,7 +21,7 @@ tags:
       - Cache
     security:
       - bearerAuth: []
-    summary: Import all caches
+    summary: +cache.import+ Import all caches
     requestBody:
       description: Data that you want to import
       required: true

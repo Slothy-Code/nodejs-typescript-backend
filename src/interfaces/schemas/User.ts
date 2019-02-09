@@ -2,10 +2,20 @@ import {Document, Model, model, Schema} from 'mongoose';
 import {UserModel} from '../models/user.model';
 import {PermissionsUtil} from '../../system/permissions/permissionsUtil';
 
+import * as bcrypt from 'bcryptjs';
+
+
 interface User extends UserModel, Document {
+    name: string;
+    password: string;
+    role: string;
+    permissions: string[];
+
     getPermissions(): string[];
 
     hasPermission(permission: string): boolean;
+
+    isValidPassword(password: string): boolean;
 }
 
 /**
@@ -25,7 +35,13 @@ const UserSchema: Schema = new Schema({
     password: {type: String, required: true, select: false},
     role: {type: String, required: true, default: 'ROLE_USER'},
     permissions: [String],
-    token: {type: String}
+});
+
+UserSchema.pre('save', async function (next) {
+    const user: any = this;
+    const hash = await bcrypt.hash(user.password, 10);
+    user.password = hash;
+    next();
 });
 
 UserSchema.methods.getPermissions = function (): string[] {
@@ -35,6 +51,5 @@ UserSchema.methods.getPermissions = function (): string[] {
 UserSchema.methods.hasPermission = function (permission: string): boolean {
     return PermissionsUtil.canAccess(this.getPermissions(), permission);
 };
-
 
 export const User: Model<User> = model<User>('User', UserSchema);

@@ -1,9 +1,9 @@
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {Controller} from '../system/decorators/controller';
 import {Route} from '../system/decorators/route';
 import {User} from '../interfaces/schemas/User';
+import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jwt-simple';
 
 @Controller('/user')
 export class AuthenticationController {
@@ -19,14 +19,14 @@ export class AuthenticationController {
             let user = await User.findOne({'name': name}).select('+password').exec();
             if (user === null) throw 'Invalid name and/or password';
 
-            user.token = this.generateToken(user);
-            user.save();
+            const passwordCompare = await bcrypt.compare(password, user.password);
+            if (!passwordCompare) throw 'Invalid name and/or password';
 
-            let success = await bcrypt.compare(password, user.password);
-            if (!success) throw 'Invalid name and/or password';
+            const token = this.generateToken(user);
 
-            return res.status(200).json(user);
+            return res.status(200).json({token: token});
         } catch (error) {
+            console.log(error);
             res.status(401).json({'message': 'Invalid credentials', 'errors': error})
         }
     }
@@ -43,10 +43,7 @@ export class AuthenticationController {
             let user = await User.findOne({name: name});
             if (user !== null) throw 'User with this name already exists';
 
-            let salt = await bcrypt.genSalt(10);
-            let hash = await bcrypt.hash(password, salt);
-
-            let newUser = await new User({name: name, password: hash}).save();
+            let newUser = await new User(req.body).save();
 
             res.status(200).json(newUser);
         } catch (err) {
@@ -54,31 +51,25 @@ export class AuthenticationController {
         }
     }
 
-    @Route({route: '/refresh-token', type: 'get'})
+    @Route({route: '/refresh-token', type: 'get', permission: 'user.refreshToken'})
     public async refreshToken(req: Request, res: Response) {
-        try {
-            if (!req.headers.authorization) throw 'Not logged!';
-            let token = req.headers.authorization.substring(7);
+        const user = req.user;
 
-            let user = await User.findOne({token: token});
+        const token = this.generateToken(user);
+        return res.status(200).json({token: token});
+    }
 
-            if (user === null) throw 'Invalid token';
-
-            user.token = this.generateToken(user);
-            user.save();
-            return res.status(200).json(user);
-        } catch (error) {
-            res.status(500).json({'message': error})
-        }
+    @Route({route: '/permissions', permission: 'user.getPermissions'})
+    public async getPermissions(req: Request, res: Response) {
+        res.status(200).json(req.user.getPermissions());
     }
 
     private generateToken(user: any) {
-        let token = jwt.encode({
+        let token = jwt.sign({
             name: user.name,
-            user: user._id
-        }, process.env.SESSION_SECRET);
+            _id: user._id
+        }, process.env.SESSION_SECRET, {expiresIn: '3h'});
         return token;
     }
-
 
 }

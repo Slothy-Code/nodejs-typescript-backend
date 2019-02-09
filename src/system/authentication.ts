@@ -1,16 +1,14 @@
 import * as express from 'express';
-import {User} from '../interfaces/schemas/User';
 
-const session = require('express-session');
 const passport = require('passport');
-const BearerStrategy = require('passport-http-bearer').Strategy;
+const passportJWT = require('passport-jwt');
 
 require('dotenv').config();
 
 export class Authentication {
     private static instance: Authentication;
 
-    constructor() {
+    private constructor() {
     }
 
     public static getInstance(): Authentication {
@@ -22,27 +20,16 @@ export class Authentication {
     }
 
     public setAuthentication(app: express.Application) {
-        passport.use(new BearerStrategy((token, done) => {
-            User.findOne({token: token}, function (err, user) {
-                if (err) {
-                    return done(err);
-                }
-                if (!user) {
-                    return done(null, false);
-                }
-                return done(null, user, {scope: 'all'});
-            });
+        passport.use(new passportJWT.Strategy({
+            secretOrKey: process.env.SESSION_SECRET,
+            jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken()
+        }, async (user, done) => {
+            try {
+                return done(null, user)
+            } catch (error) {
+                done(error);
+            }
         }));
-
-        passport.serializeUser(function (user, done) {
-            done(null, user.token);
-        });
-
-        passport.deserializeUser(function (token, done) {
-            User.findOne({token: token}, function (err, user) {
-                done(err, user);
-            });
-        });
 
         app.use(function (req, res, next) {
             res.setHeader('Access-Control-Allow-Origin', '*');
@@ -52,13 +39,6 @@ export class Authentication {
             next();
         });
 
-        app.use(session({
-            secret: process.env.SESSION_SECRET, saveUninitialized: true, resave: true,
-            cookie: {
-                httpOnly: true,
-                maxAge: 60 * 60 * 1000
-            }
-        }));
         app.use(passport.initialize());
         app.use(passport.session());
     }

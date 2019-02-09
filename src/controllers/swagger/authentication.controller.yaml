@@ -41,7 +41,7 @@ tags:
   get:
     tags:
       - Authentication
-    summary: Refresh old token
+    summary: +user.refreshToken+ Refresh old token
     security:
       - bearerAuth: []
     produces:
@@ -54,3 +54,13 @@ tags:
       '403':
         $ref: '#/components/responses/UnauthorizedError'
 
+/user/permissions:
+  get:
+    tags:
+      - Authentication
+    summary: +user.getPermissions+ Get all current users permissions
+    security:
+      - bearerAuth: []
+    responses:
+      '200':
+        description: All users permissions

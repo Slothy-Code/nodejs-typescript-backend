@@ -3,7 +3,7 @@
     "name": "ROLE_USER",
     "extends": [],
     "permissions": [
-      "user.login",
+      "user.*",
       "chat.*"
     ]
   },
@@ -20,7 +20,9 @@
     "name": "ROLE_ADMIN",
     "extends": [],
     "permissions": [
-      "users.*"
+      "users.*",
+      "roles.*",
+      "cache.*"
     ]
   },
   {
