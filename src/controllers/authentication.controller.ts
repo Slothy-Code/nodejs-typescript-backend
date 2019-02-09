@@ -25,7 +25,7 @@ export class AuthenticationController {
             let success = await bcrypt.compare(password, user.password);
             if (!success) throw 'Invalid name and/or password';
 
-            return res.status(200).json(user.token);
+            return res.status(200).json(user);
         } catch (error) {
             res.status(401).json({'message': 'Invalid credentials', 'errors': error})
         }
@@ -66,7 +66,7 @@ export class AuthenticationController {
 
             user.token = this.generateToken(user);
             user.save();
-            return res.status(200).json(user.token);
+            return res.status(200).json(user);
         } catch (error) {
             res.status(500).json({'message': error})
         }
