@@ -26,7 +26,7 @@ export class Authentication {
             jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken()
         }, async (user, done) => {
             try {
-                return done(null, await this.serializeUser(user))
+                return done(null, await this.deserializeUser(user))
             } catch (error) {
                 done(error);
             }
@@ -45,7 +45,7 @@ export class Authentication {
     }
 
 
-    private async serializeUser(user: any) {
+    private async deserializeUser(user: any) {
         return User.findById(user._id);
     }
 }
