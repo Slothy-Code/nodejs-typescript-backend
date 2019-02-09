@@ -1,4 +1,5 @@
 import * as express from 'express';
+import {User} from '../interfaces/schemas/User';
 
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
@@ -25,7 +26,7 @@ export class Authentication {
             jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken()
         }, async (user, done) => {
             try {
-                return done(null, user)
+                return done(null, await this.serializeUser(user))
             } catch (error) {
                 done(error);
             }
@@ -41,5 +42,10 @@ export class Authentication {
 
         app.use(passport.initialize());
         app.use(passport.session());
+    }
+
+
+    private async serializeUser(user: any) {
+        return User.findById(user._id);
     }
 }
