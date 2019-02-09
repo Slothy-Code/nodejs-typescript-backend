@@ -4,6 +4,7 @@ import * as fs from 'fs';
 
 const bodyParser = require('body-parser');
 const responseTime = require('response-time');
+const cors = require('cors');
 
 // load environment variables
 require('dotenv').config();
@@ -25,7 +26,7 @@ export class Server {
         Server.app.use(bodyParser.urlencoded({extended: true}));
         Server.app.use(bodyParser.json());
         Server.app.use(responseTime());
-
+        Server.app.use(cors());
         spdy.createServer(this.options, Server.app).listen(process.env.PORT, () => {
             console.log('[Server] Server is listening on port ' + process.env.PORT);
         });
