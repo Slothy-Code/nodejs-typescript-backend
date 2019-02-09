@@ -16,4 +16,16 @@ export class CacheController {
         res.status(200).json(JSON.parse(exported))
     }
 
+    @Route({route: '/import', type: 'post'})
+    public async import(req: Request, res: Response) {
+        try {
+            cache.importJson(req.body.importedData, { skipDuplicates: true });
+
+            res.status(200).json(req.body.importedData)
+        } catch (err) {
+            res.status(400).json(err)
+        }
+
+    }
+
 }

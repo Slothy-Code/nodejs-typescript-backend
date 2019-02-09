@@ -37,11 +37,11 @@ tags:
         description: Successful register
 
 
-/user/test:
+/user/refresh-token:
   get:
     tags:
       - Authentication
-    summary: Get test to the application
+    summary: Refresh old token
     security:
       - bearerAuth: []
     produces:
