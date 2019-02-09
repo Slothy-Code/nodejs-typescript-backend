@@ -8,16 +8,21 @@ tags:
   post:
     tags:
       - Chat
-    summary: Login to the application
+    summary: +chat.send+ Send message to another user
     security:
       - bearerAuth: []
     requestBody:
-      description: User that you want to login
       required: true
       content:
         application/json:
           schema:
-           $ref: '#/definitions/UserSchema'
+            properties:
+              receiver:
+                type: string
+                example: ad123!23min1s23
+              message:
+                type: string
+                example: message
     responses:
       '200':
         description: Successful login adn return token
