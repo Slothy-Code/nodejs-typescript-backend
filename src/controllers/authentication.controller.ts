@@ -26,7 +26,6 @@ export class AuthenticationController {
 
             return res.status(200).json({token: token});
         } catch (error) {
-            console.log(error);
             res.status(401).json({'message': 'Invalid credentials', 'errors': error})
         }
     }
@@ -69,7 +68,7 @@ export class AuthenticationController {
             name: user.name,
             role: user.role,
             _id: user._id
-        }, process.env.SESSION_SECRET, {expiresIn: '3h'});
+        }, process.env.SESSION_SECRET, {expiresIn: process.env.TOKEN_EXPIRATION_TIME});
         return token;
     }
 
