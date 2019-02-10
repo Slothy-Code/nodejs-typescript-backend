@@ -5,12 +5,7 @@ import {PermissionsUtil} from '../../system/permissions/permissionsUtil';
 import * as bcrypt from 'bcryptjs';
 
 
-interface User extends UserModel, Document {
-    name: string;
-    password: string;
-    role: string;
-    permissions: string[];
-
+export interface User extends UserModel, Document {
     getPermissions(): string[];
 
     hasPermission(permission: string): boolean;
@@ -23,7 +18,7 @@ interface User extends UserModel, Document {
  * definition:
  *   UserSchema:
  *     properties:
- *       name:
+ *       username:
  *         type: string
  *         example: admin123
  *       password:

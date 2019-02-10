@@ -61,12 +61,13 @@ export class AuthenticationController {
 
     @Route({route: '/permissions', permission: 'user.getPermissions'})
     public async getPermissions(req: Request, res: Response) {
-        res.status(200).json(req.user.getPermissions());
+        res.status(200).json({permissions: req.user.getPermissions()});
     }
 
-    private generateToken(user: any) {
+    private generateToken(user: User) {
         let token = jwt.sign({
             name: user.name,
+            role: user.role,
             _id: user._id
         }, process.env.SESSION_SECRET, {expiresIn: '3h'});
         return token;
