@@ -5,14 +5,14 @@ export class PermissionsMiddleware {
         return (req, res, next) => {
             passport.authenticate('jwt', {session: false}, async (err, user, info) => {
                 if (!user) {
-                    res.status(403).json({message: 'Forbidden'});
+                    res.status(401).json({message: 'Forbidden'});
                     return;
                 }
 
                 if (user.hasPermission(permission)) {
                     req.user = user;
                     next();
-                } else res.status(402).json({message: 'Forbidden'});
+                } else res.status(401).json({message: 'Forbidden'});
             })(req, res, next);
         }
     }
