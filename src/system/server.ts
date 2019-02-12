@@ -1,6 +1,8 @@
 import * as express from 'express';
 import * as spdy from 'spdy';
 import * as fs from 'fs';
+import * as swaggerConfig from './swagger.config.json';
+import {Logger} from './logger';
 
 const bodyParser = require('body-parser');
 const responseTime = require('response-time');
@@ -11,7 +13,8 @@ require('dotenv').config();
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerJSDoc = require('swagger-jsdoc');
-import * as swaggerConfig from './swagger.config.json';
+
+const logger = new Logger('Server', 'red');
 
 export class Server {
     private static instance: Server;
@@ -28,7 +31,7 @@ export class Server {
         Server.app.use(responseTime());
         Server.app.use(cors());
         spdy.createServer(this.options, Server.app).listen(process.env.PORT, () => {
-            console.log('[Server] Server is listening on port ' + process.env.PORT);
+            logger.success('Server is listening on port ' + process.env.PORT)
         });
     }
 

@@ -1,4 +1,7 @@
 import * as mongoose from 'mongoose';
+import {Logger} from './logger';
+
+const logger = new Logger('Database', 'green');
 
 export class DbConnector {
     private static instance: DbConnector;
@@ -36,18 +39,18 @@ export class DbConnector {
 
     public connect() {
         if (mongoose.connection.readyState) {
-            console.log('[Database] connected successfully');
+            logger.success('Connected successfully')
             return;
         }
 
         mongoose.connect('mongodb://' + this.access.user + ':' + this.access.password + '@' + this.access.host + ':' + this.access.port + '/' + this.access.name, this.options);
         mongoose.set('useFindAndModify', false);
         mongoose.connection.on('connected', () => {
-            console.log('[Database] connected successfully');
+            logger.success('Connected successfully')
         });
 
         mongoose.connection.on('error', (err) => {
-            console.log('[Database] Error connecting to DB ' + err);
+            logger.error('Connection fail' + err)
         });
 
     }
