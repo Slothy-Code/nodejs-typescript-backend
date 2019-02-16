@@ -4,7 +4,6 @@ import {Logger} from './logger';
 const logger = new Logger('Database', 'green');
 
 export class DbConnector {
-    private static instance: DbConnector;
     private readonly options;
     private readonly access;
 
@@ -23,14 +22,6 @@ export class DbConnector {
             port: process.env.DB_PORT,
             name: process.env.DB_NAME
         }
-    }
-
-    public static getInstance(): DbConnector {
-        if (!DbConnector.instance) {
-            DbConnector.instance = new DbConnector();
-        }
-
-        return DbConnector.instance;
     }
 
     public getConnection(): mongoose.Connection {

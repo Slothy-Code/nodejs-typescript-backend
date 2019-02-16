@@ -1,8 +1,12 @@
 import * as express from 'express';
 import * as spdy from 'spdy';
 import * as fs from 'fs';
-import * as swaggerConfig from './swagger.config.json';
 import {Logger} from './logger';
+import * as path from 'path';
+import {controllers} from '../controllers';
+import {Authentication} from './authentication';
+import {DbConnector} from './dbConnector';
+import swaggerConfig from './swagger.config';
 
 const bodyParser = require('body-parser');
 const responseTime = require('response-time');
@@ -17,43 +21,64 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const logger = new Logger('Server', 'red');
 
 export class Server {
-    private static instance: Server;
-    private static app: express.Application;
-    private readonly options: {key: Buffer, cert: Buffer} = {key: null, cert: null};
+    private app: express.Application;
+    private authentication: Authentication;
+    private dbConnector: DbConnector;
 
     constructor() {
-        this.options.key = fs.readFileSync(__dirname + '/certificates/key.pem');
-        this.options.cert = fs.readFileSync(__dirname + '/certificates/cert.pem');
+        this.app = express();
+        this.app.use(bodyParser.urlencoded({extended: true}));
+        this.app.use(bodyParser.json());
+        this.app.use(responseTime());
+        this.app.use(cors());
 
-        Server.app = express();
-        Server.app.use(bodyParser.urlencoded({extended: true}));
-        Server.app.use(bodyParser.json());
-        Server.app.use(responseTime());
-        Server.app.use(cors());
-        spdy.createServer(this.options, Server.app).listen(process.env.PORT, () => {
-            logger.success('Server is listening on port ' + process.env.PORT)
+        this.authentication = new Authentication(this.app);
+        this.connectToDB();
+        this.bindControllers();
+        this.bindSwagger();
+        this.runServer();
+    }
+
+
+    private bindControllers() {
+        for (let c of controllers) {
+            const controller = new c();
+            const path = process.env.BASE_HREF + controller.getPath();
+            const pathWithoutDoubleSlash = path.replace('//', '/');
+            this.app.use(pathWithoutDoubleSlash, controller.getRouter());
+        }
+    }
+
+    private bindSwagger() {
+        if (process.env.PROD === 'true') return;
+        this.app.use(process.env.SWAGGER_HREF, swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(swaggerConfig)));
+    }
+
+    private runServer() {
+        if (process.env.USE_SSL === 'true') {
+            this.runSSLServer();
+            return;
+        }
+        this.runStandardServer();
+    }
+
+    private runSSLServer() {
+        const options = {key: null, cert: null};
+        options.key = fs.readFileSync(path.resolve(__dirname, '../../' + process.env.PRIVKEY_PATH));
+        options.cert = fs.readFileSync(path.resolve(__dirname, '../../' + process.env.CERT_PATH));
+        spdy.createServer(options, this.app).listen(+process.env.PORT, process.env.HOST, () => {
+            logger.success('HTTPS server is listening on ' + process.env.HOST + ':' + process.env.PORT)
         });
     }
 
-    public static getInstance(): Server {
-        if (!Server.instance) {
-            Server.instance = new Server();
-        }
-        return Server.instance;
+    private runStandardServer() {
+        this.app.listen(+process.env.PORT, process.env.HOST, () => {
+            logger.success('Server is listening on ' + process.env.HOST + ':' + process.env.PORT);
+        });
     }
 
-    public getApp(): express.Application {
-        return Server.app;
-    }
-
-    public bindControllers(controllers) {
-        for (let c of controllers) {
-            const controller = new c();
-            Server.app.use('/api' + controller.getPath(), controller.getRouter());
-        }
-    }
-
-    public bindSwagger() {
-        Server.app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(swaggerConfig)));
+    private connectToDB() {
+        this.dbConnector = new DbConnector();
+        this.dbConnector.connect();
     }
 }
