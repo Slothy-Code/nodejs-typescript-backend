@@ -1,7 +1,7 @@
 import {injectable} from 'inversify';
 import 'reflect-metadata';
-import {ChatUser} from '../interfaces/interfaces/chat-user';
-import {UserModel} from '../interfaces/models/user.model';
+import {ChatUser} from '../interfaces/chat-user';
+import {UserModel} from '../models/user.model';
 
 @injectable()
 export class ChatService {

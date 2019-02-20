@@ -1,9 +1,9 @@
 import {Controller} from '../system/decorators/controller';
-import DIContainer from '../system/di-container';
+import DIContainer from '../system/dependency-injection/di-container';
 import {Route} from '../system/decorators/route';
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {ChatService} from '../services/chat.service';
-import {ChatUser} from '../interfaces/interfaces/chat-user';
+import {ChatUser} from '../interfaces/chat-user';
 
 @Controller('/chat')
 export class ChatController {

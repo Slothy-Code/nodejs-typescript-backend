@@ -1,5 +1,4 @@
 import * as express from 'express';
-import {CacheMiddleware} from '../cache-middleware';
 
 export function Controller(path: string) {
 
@@ -21,10 +20,8 @@ export function Controller(path: string) {
             public setMethods(methods: Array<any>) {
                 this.methods = methods;
                 for (let method of this.methods) {
-                    const middlewares = [];
-                    if (method.middleware) middlewares.push(method.middleware);
-                    if (method.cached) middlewares.push(CacheMiddleware.cacheMiddleware);
-
+                    const middlewares = [...method.middlewares];
+                    if (method.dtoMiddleware) middlewares.push(method.dtoMiddleware);
                     this.router[method.type](method.route, middlewares, method.bind(this))
                 }
             }

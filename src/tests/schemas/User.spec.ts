@@ -1,7 +1,7 @@
 import 'mocha';
 import {expect} from 'chai';
-import {User} from '../../../interfaces/schemas/User';
-import * as permissionsConfig from '../../../permissions.json'
+import {User} from '../../schemas/User';
+import * as permissionsConfig from '../../permissions.json'
 
 describe('User schema', () => {
     it('should return all permissions', () => {

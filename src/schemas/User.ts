@@ -1,6 +1,6 @@
 import {Document, Model, model, Schema} from 'mongoose';
 import {UserModel} from '../models/user.model';
-import {PermissionsUtil} from '../../system/permissions/permissionsUtil';
+import {PermissionsUtil} from '../system/utils/permissionsUtil';
 
 import * as bcrypt from 'bcryptjs';
 
@@ -18,7 +18,7 @@ export interface User extends UserModel, Document {
  * definition:
  *   UserSchema:
  *     properties:
- *       username:
+ *       name:
  *         type: string
  *         example: admin123
  *       password:

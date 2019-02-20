@@ -1,6 +1,6 @@
 import 'mocha';
 import {expect} from 'chai';
-import {PermissionsUtil} from '../../../system/permissions/permissionsUtil';
+import {PermissionsUtil} from '../../../system/utils/permissionsUtil';
 import * as permissions from '../../../permissions.json';
 
 describe('Permissions util', () => {

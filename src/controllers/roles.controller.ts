@@ -1,8 +1,8 @@
 import {Request, Response} from 'express';
+import * as permissions from '../permissions.json';
+import {PermissionsUtil} from '../system/utils/permissionsUtil';
 import {Controller} from '../system/decorators/controller';
 import {Route} from '../system/decorators/route';
-import * as permissions from '../permissions.json';
-import {PermissionsUtil} from '../system/permissions/permissionsUtil';
 
 const cache = require('memory-cache');
 

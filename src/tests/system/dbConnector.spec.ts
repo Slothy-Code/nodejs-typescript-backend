@@ -1,6 +1,6 @@
 import 'mocha';
 import {expect} from 'chai';
-import {DbConnector} from '../../system/dbConnector';
+import {DbConnector} from '../../system/tools/dbConnector';
 import * as mongoose from 'mongoose';
 import * as sinon from 'sinon';
 
