@@ -1,12 +1,13 @@
 import * as express from 'express';
 import * as spdy from 'spdy';
 import * as fs from 'fs';
-import {Logger} from './logger';
+import {Logger} from './tools/logger';
 import * as path from 'path';
 import {controllers} from '../controllers';
-import {Authentication} from './authentication';
-import {DbConnector} from './dbConnector';
+import {Authentication} from './tools/authentication';
+import {DbConnector} from './tools/dbConnector';
 import swaggerConfig from './swagger.config';
+import {errorMiddleware} from './middlewares/error.middleware';
 
 const bodyParser = require('body-parser');
 const responseTime = require('response-time');
@@ -36,9 +37,16 @@ export class Server {
         this.connectToDB();
         this.bindControllers();
         this.bindSwagger();
-        this.runServer();
+        this.initializeErrorHandling();
     }
 
+    public listen() {
+        if (process.env.USE_SSL === 'true') {
+            this.runSSLServer();
+            return;
+        }
+        this.runStandardServer();
+    }
 
     private bindControllers() {
         for (let c of controllers) {
@@ -52,14 +60,6 @@ export class Server {
     private bindSwagger() {
         if (process.env.PROD === 'true') return;
         this.app.use(process.env.SWAGGER_HREF, swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(swaggerConfig)));
-    }
-
-    private runServer() {
-        if (process.env.USE_SSL === 'true') {
-            this.runSSLServer();
-            return;
-        }
-        this.runStandardServer();
     }
 
     private runSSLServer() {
@@ -80,5 +80,9 @@ export class Server {
     private connectToDB() {
         this.dbConnector = new DbConnector();
         this.dbConnector.connect();
+    }
+
+    private initializeErrorHandling() {
+        this.app.use(errorMiddleware);
     }
 }

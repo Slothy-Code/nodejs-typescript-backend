@@ -1,5 +1,5 @@
 import 'mocha';
-import {PermissionsMiddleware} from '../../../system/permissions/permissionsMiddleware';
+import {PermissionsMiddleware} from '../../../system/middlewares/permissionsMiddleware';
 import * as sinon from 'sinon';
 
 describe('Permissions middleware', () => {
