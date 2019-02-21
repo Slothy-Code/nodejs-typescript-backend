@@ -3,7 +3,12 @@ import {NextFunction, Request, Response} from 'express';
 
 
 export function errorMiddleware(error: HttpException, request: Request, response: Response, next: NextFunction) {
+    let message = error.message || 'Something went wrong';
     const status = error.status || 500;
-    const message = error.message || 'Something went wrong';
+
+    if (process.env.PROD === 'true' && status === 500) {
+        message = 'Something went wrong';
+    }
+
     response.status(status).send({status, message});
 }
