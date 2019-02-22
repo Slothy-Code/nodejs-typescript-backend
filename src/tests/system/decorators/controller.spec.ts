@@ -5,17 +5,17 @@ import {Controller} from '../../../system/decorators/controller';
 
 @Controller('/test')
 class ExampleClass {
-    @Route('/', 'test2', 'test3')
+    @Route({route: '/', type: 'get', permission: 'test.test'})
     public exampleFunction1() {
         console.log('test');
     }
 
-    @Route('/', 'test2')
+    @Route({route: '/', type: 'get', permission: 'test.test'})
     public exampleFunction2() {
         console.log('test');
     }
 
-    @Route('/')
+    @Route({route: '/'})
     public exampleFunction3() {
         console.log('test');
     }

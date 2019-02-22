@@ -1,6 +1,6 @@
 import 'mocha';
-import {PermissionsMiddleware} from '../../../system/middlewares/permissionsMiddleware';
 import * as sinon from 'sinon';
+import {permissionMiddleware} from '../../../system/middlewares/permission.middleware';
 
 describe('Permissions middleware', () => {
     let stubHttpRequest;
@@ -9,7 +9,7 @@ describe('Permissions middleware', () => {
         stubHttpRequest = sinon.useFakeXMLHttpRequest();
     });
     it('should return middleware function', () => {
-        const middleware = PermissionsMiddleware.hasPermission('user.create');
+        const middleware = permissionMiddleware('user.create');
         stubHttpRequest.req = {token: 'testToken'};
         stubHttpRequest.next = () => {
             console.log('next mock')
