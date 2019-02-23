@@ -13,7 +13,7 @@
     "prod": "npm run build && npm run start",
     "lint": "tslint src/*",
     "test": "mocha --recursive --require ts-node/register \"src/tests/**/*.spec.ts\"",
-    "test:cover": "nyc npm run test"
+    "test:cover": "nyc --cache=false npm run test"
   },
   "author": "",
   "license": "ISC",
@@ -98,7 +98,8 @@
     "exclude": [
       "**/*.d.ts",
       "coverage/**/*",
-      "src/tests/**/*"
+      "src/tests/**/*",
+      "src/main.ts"
     ],
     "all": true
   }

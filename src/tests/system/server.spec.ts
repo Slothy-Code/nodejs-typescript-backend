@@ -1,6 +1,11 @@
 import 'mocha';
 import {Controller} from '../../system/decorators/controller';
 import {Route} from '../../system/decorators/route';
+import {Server} from '../../system/server';
+import * as spdy from 'spdy';
+import * as sinon from 'sinon';
+import * as mongoose from 'mongoose';
+
 
 @Controller('/test')
 class ExampleController {
@@ -21,12 +26,31 @@ class ExampleController {
 }
 
 describe('Server', () => {
-    // it('should return server instance', () => {
-    // });
+    const server = new Server();
+    const appListenStub = sinon.stub(server.app, 'listen');
 
-    // it('should bind controllers', () => {
-    //     server.bindControllers([ExampleController]);
-    //
-    //     expect(server.getApp()._router.stack.find(e => e.regexp === '/^\\/api\\/test\\/?(?=\\/|$)/i')).to.not.equal(null);
-    // })
+    after((done) => {
+        mongoose.connection.close(done);
+    });
+
+
+    it('should run ssl server if config says run ssl', () => {
+        process.env.USE_SSL = 'true';
+        const spdyStub = sinon.stub(spdy, 'createServer');
+        spdyStub.returns({
+            listen: () => {
+            }
+        });
+
+        server.listen();
+
+        sinon.assert.called(spdyStub);
+    })
+
+    it('should run standard server if config says run standard', () => {
+        process.env.USE_SSL = 'false';
+        server.listen();
+
+        sinon.assert.called(appListenStub);
+    })
 });
