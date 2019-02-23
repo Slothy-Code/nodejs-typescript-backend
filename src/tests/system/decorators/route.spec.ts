@@ -17,6 +17,11 @@ class ExampleClass {
     public exampleFunction3() {
         console.log('test');
     }
+
+    @Route({route: '/', type: 'post', permission: 'test4', cached: true})
+    public exampleFunction4() {
+        console.log('test');
+    }
 }
 
 describe('Route decorator', () => {
@@ -28,6 +33,7 @@ describe('Route decorator', () => {
 
         expect(func['route']).to.equal('/');
         expect(func['type']).to.equal('post');
+        expect(func['middlewares'].length).to.equal(1);
     });
 
     it('should decorate function2', () => {
@@ -37,7 +43,6 @@ describe('Route decorator', () => {
 
         expect(func['route']).to.equal('/');
         expect(func['type']).to.equal('post');
-        expect(func['permission']).to.be.undefined;
 
     });
 
@@ -48,8 +53,17 @@ describe('Route decorator', () => {
 
         expect(func['route']).to.equal('/');
         expect(func['type']).to.equal('get');
-        expect(func['permission']).to.be.undefined;
 
+    });
+
+    it('should decorate function4', () => {
+        let exampleObject = new ExampleClass();
+
+        let func = exampleObject.exampleFunction4;
+
+        expect(func['route']).to.equal('/');
+        expect(func['type']).to.equal('post');
+        expect(func['middlewares'].length).to.equal(2);
     });
 
 });
