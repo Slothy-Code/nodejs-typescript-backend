@@ -1,6 +1,6 @@
 import 'mocha';
 import {expect} from 'chai';
-import {User} from '../../schemas/User';
+import {User} from '../../schemas/user';
 import * as permissionsConfig from '../../permissions.json'
 
 describe('User schema', () => {

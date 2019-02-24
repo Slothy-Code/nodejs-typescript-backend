@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {User} from '../../schemas/User';
+import {User} from '../../schemas/user';
 
 const passport = require('passport');
 const passportJWT = require('passport-jwt');

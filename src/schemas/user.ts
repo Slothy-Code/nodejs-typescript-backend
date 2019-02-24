@@ -25,7 +25,7 @@ export interface User extends UserModel, Document {
  *         type: string
  *         example: admin123
  */
-const UserSchema: Schema = new Schema({
+export const UserSchema: Schema = new Schema({
     name: {type: String, required: true},
     password: {type: String, required: true, select: false},
     role: {type: String, required: true, default: 'ROLE_USER'},

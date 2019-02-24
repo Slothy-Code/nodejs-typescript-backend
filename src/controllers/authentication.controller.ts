@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {Controller} from '../system/decorators/controller';
 import {Route} from '../system/decorators/route';
-import {User} from '../schemas/User';
+import {User} from '../schemas/user';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcryptjs';
 import {DTOValidate} from '../system/decorators/dto-validate';
