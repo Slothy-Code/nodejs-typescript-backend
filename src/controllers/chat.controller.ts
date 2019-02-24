@@ -20,7 +20,9 @@ export class ChatController {
 
     @Route({route: '/conversations', permission: 'chat.getConversations'})
     public async getConversations(req: Request, res: Response, next: NextFunction) {
-        const usersConversations = await Conversation.find({users: req.user}).populate('users', 'name');
+        const usersConversations = await Conversation.find({users: req.user})
+            .populate('users', 'name')
+            .populate('messages');
         res.status(200).json(usersConversations);
     }
 
