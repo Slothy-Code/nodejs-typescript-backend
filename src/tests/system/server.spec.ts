@@ -1,36 +1,56 @@
 import 'mocha';
-import {expect} from 'chai';
-import {Server} from '../../system/server';
 import {Controller} from '../../system/decorators/controller';
 import {Route} from '../../system/decorators/route';
+import {Server} from '../../system/server';
+import * as spdy from 'spdy';
+import * as sinon from 'sinon';
+import * as mongoose from 'mongoose';
+
 
 @Controller('/test')
 class ExampleController {
-    @Route('/', 'get', 'test.test')
+    @Route({route: '/', type: 'get', permission: 'test.test'})
     public exampleFunction1() {
         console.log('test');
     }
 
-    @Route('/', 'post')
+    @Route({route: '/', type: 'post'})
     public exampleFunction2() {
         console.log('test');
     }
 
-    @Route('/')
+    @Route({route: '/'})
     public exampleFunction3() {
         console.log('test');
     }
 }
 
 describe('Server', () => {
-    it('should return server instance', () => {
-        expect(Server.getInstance()).to.be.an('object')
+    const server = new Server();
+    const appListenStub = sinon.stub(server.app, 'listen');
+
+    after((done) => {
+        mongoose.connection.close(done);
     });
 
-    it('should bind controllers', () => {
-        const server = Server.getInstance();
-        server.bindControllers([ExampleController]);
 
-        expect(server.getApp()._router.stack.find(e => e.regexp === '/^\\/api\\/test\\/?(?=\\/|$)/i')).to.not.equal(null);
+    it('should run ssl server if config says run ssl', () => {
+        process.env.USE_SSL = 'true';
+        const spdyStub = sinon.stub(spdy, 'createServer');
+        spdyStub.returns({
+            listen: () => {
+            }
+        });
+
+        server.listen();
+
+        sinon.assert.called(spdyStub);
+    })
+
+    it('should run standard server if config says run standard', () => {
+        process.env.USE_SSL = 'false';
+        server.listen();
+
+        sinon.assert.called(appListenStub);
     })
 });

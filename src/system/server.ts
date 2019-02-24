@@ -5,7 +5,7 @@ import {Logger} from './tools/logger';
 import * as path from 'path';
 import {controllers} from '../controllers';
 import {Authentication} from './tools/authentication';
-import {DbConnector} from './tools/dbConnector';
+import {DbConnector} from './tools/db-connector';
 import swaggerConfig from './swagger.config';
 import {errorMiddleware} from './middlewares/error.middleware';
 
@@ -22,7 +22,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const logger = new Logger('Server', 'red');
 
 export class Server {
-    private app: express.Application;
+    public readonly app: express.Application;
     private authentication: Authentication;
     private dbConnector: DbConnector;
 
@@ -42,8 +42,7 @@ export class Server {
 
     public listen() {
         if (process.env.USE_SSL === 'true') {
-            this.runSSLServer();
-            return;
+            return this.runSSLServer();
         }
         this.runStandardServer();
     }
