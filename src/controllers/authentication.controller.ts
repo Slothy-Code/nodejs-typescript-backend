@@ -19,10 +19,10 @@ export class AuthenticationController {
         const password = req.body.password;
 
         let user = await User.findOne({'name': name}).select('+password').exec();
-        if (user === null) next(new HttpException(401, 'Invalid name and/or password'));
+        if (user === null) return next(new HttpException(401, 'Invalid name and/or password'));
 
         const passwordCompare = await bcrypt.compare(password, user.password);
-        if (!passwordCompare) next(new HttpException(401, 'Invalid name and/or password'));
+        if (!passwordCompare) return next(new HttpException(401, 'Invalid name and/or password'));
 
         const token = this.generateToken(user);
 
@@ -35,7 +35,7 @@ export class AuthenticationController {
         let name = req.body.name;
 
         let user = await User.findOne({name: name});
-        if (user !== null) next(new HttpException(409, 'User already exists'));
+        if (user !== null) return next(new HttpException(409, 'User already exists'));
 
         let newUser = await new User(req.body).save();
 
