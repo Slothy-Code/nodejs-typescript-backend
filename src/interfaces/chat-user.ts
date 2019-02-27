@@ -1,7 +1,7 @@
-import {UserModel} from '../models/user.model';
 import {Response} from 'express';
+import {User} from '../schemas/user';
 
 export interface ChatUser {
-    user: UserModel;
+    user: User;
     connection: Response;
 }

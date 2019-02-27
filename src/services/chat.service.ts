@@ -24,9 +24,12 @@ export class ChatService {
 
     public sendNewMessageToActiveUsers(conversation: Conversation) {
         for (const user of conversation.users) {
-            const activeUser = this.activeUsers.find(activeUser => activeUser.user['_id'] === user['_id'])
-            activeUser.connection.write(conversation);
+            const activeUser = this.activeUsers.find(activeUser => {
+                return activeUser.user._id.equals(user._id);
+            });
+            if (activeUser) {
+                activeUser.connection.write(`data: ${JSON.stringify(conversation)}\n\n`);
+            }
         }
     }
-
 }

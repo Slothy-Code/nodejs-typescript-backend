@@ -1,7 +1,7 @@
-import {UserModel} from './user.model';
-import {MessageModel} from './message.model';
+import {User} from '../schemas/user';
+import {Message} from '../schemas/message';
 
 export interface ConversationModel {
-    users: UserModel[];
-    messages: MessageModel[];
+    users: User[];
+    messages: Message[];
 }
