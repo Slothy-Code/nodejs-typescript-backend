@@ -18,17 +18,21 @@ export class ChatService {
 
     public async sendMessage(sender: User, conversation: Conversation, text: string) {
         const message = await new Message({sender: sender, text: text}).save();
-        conversation.addMessage(message);
-        this.sendNewMessageToActiveUsers(conversation);
+        await conversation.addMessage(message);
+        await this.sendNewMessageToActiveUsers(conversation);
     }
 
-    public sendNewMessageToActiveUsers(conversation: Conversation) {
+    public async sendNewMessageToActiveUsers(conversation: Conversation) {
         for (const user of conversation.users) {
             const activeUser = this.activeUsers.find(activeUser => {
                 return activeUser.user._id.equals(user._id);
             });
+            const payload = await Conversation.findById(conversation._id).populate({
+                path: 'messages',
+                options: {limit: 1, sort: {created_at: -1}}
+            })
             if (activeUser) {
-                activeUser.connection.write(`data: ${JSON.stringify(conversation)}\n\n`);
+                activeUser.connection.write(`data: ${JSON.stringify(payload)}\n\n`);
             }
         }
     }

@@ -22,12 +22,4 @@ export const MessageSchema: Schema = new Schema({
     text: {type: String, required: true}
 }, {timestamps: {createdAt: 'created_at'}});
 
-// ConversationSchema.methods.getPermissions = function (): string[] {
-//     return [...PermissionsUtil.getAllPermissions(this.role), ...this.permissions];
-// };
-//
-// UserSchema.methods.hasPermission = function (permission: string): boolean {
-//     return PermissionsUtil.canAccess(this.getPermissions(), permission);
-// };
-//
 export const Message: Model<Message> = model<Message>('Message', MessageSchema);
