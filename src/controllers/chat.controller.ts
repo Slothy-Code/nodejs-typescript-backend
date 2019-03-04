@@ -56,7 +56,7 @@ export class ChatController {
     }
 
     @DTOValidate(ChatSendDto)
-    @Route({route: '/send', type: 'post', permission: 'chat.send'})
+    @Route({route: '/send-message', type: 'post', permission: 'chat.sendMessage'})
     public async send(req: Request, res: Response) {
         const body: ChatSendDto = req.body;
         const sender = req.user;
