@@ -7,6 +7,9 @@ import {ChatUser} from '../interfaces/chat-user';
 import {Conversation} from '../schemas/conversation';
 import {DTOValidate} from '../system/decorators/dto-validate';
 import {ChatSendDto} from '../DTO/chat-send.dto';
+import {HttpException} from '../system/exceptions/http-exception';
+import {CreateConversationDto} from '../DTO/create-conversation.dto';
+import {User} from '../schemas/user';
 
 @Controller('/chat')
 export class ChatController {
@@ -41,10 +44,18 @@ export class ChatController {
         res.status(200).json(conversation);
     }
 
+    @DTOValidate(CreateConversationDto)
     @Route({route: '/conversations', type: 'post', permission: 'chat.createConversation'})
     public async createConversation(req: Request, res: Response, next: NextFunction) {
-        //todo add another users
-        const conversation = await new Conversation({users: [req.user]}).save();
+        const body: CreateConversationDto = req.body;
+        const userIdsSet = new Set(body.userIds);
+        const parsedUserIds = Array.from(userIdsSet);
+        if (!parsedUserIds.find(id => req.user._id.equals(id))) {
+            return next(new HttpException(400, 'You have to be conversation participant'));
+        }
+        const usersObjects = await Promise.all(parsedUserIds.map(async id => await User.findById(id)));
+
+        const conversation = await new Conversation({users: usersObjects}).save();
         res.status(200).json(conversation);
     }
 
@@ -57,10 +68,11 @@ export class ChatController {
 
     @DTOValidate(ChatSendDto)
     @Route({route: '/send-message', type: 'post', permission: 'chat.sendMessage'})
-    public async send(req: Request, res: Response) {
+    public async send(req: Request, res: Response, next: NextFunction) {
         const body: ChatSendDto = req.body;
         const sender = req.user;
         const conversation: Conversation = await Conversation.findById(req.body.conversation);
+        if (conversation === null) return next(new HttpException(404, 'Conversation not found'));
         await this.chatService.sendMessage(sender, conversation, body.text);
 
         res.status(200).json(conversation)

@@ -19,10 +19,10 @@ export class ChatService {
     public async sendMessage(sender: User, conversation: Conversation, text: string) {
         const message = await new Message({sender: sender, text: text}).save();
         await conversation.addMessage(message);
-        await this.sendNewMessageToActiveUsers(conversation);
+        await this.updateConversationToActiveUsers(conversation);
     }
 
-    public async sendNewMessageToActiveUsers(conversation: Conversation) {
+    public async updateConversationToActiveUsers(conversation: Conversation) {
         for (const user of conversation.users) {
             const activeUser = this.activeUsers.find(activeUser => {
                 return activeUser.user._id.equals(user._id);
